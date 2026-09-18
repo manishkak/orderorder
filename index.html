@@ -576,6 +576,19 @@
             const todayStr = new Date().toDateString();
             if (userStats.lastPlayedDate === todayStr) {
                 gameState.status = "FINISHED";
+
+                if (userStats.lastResult) {
+                    gameState.clearedLevel1 = userStats.lastResult.clearedLevel1;
+                    gameState.clearedLevel2 = userStats.lastResult.clearedLevel2;
+                    gameState.level1AttemptsUsed = userStats.lastResult.level1AttemptsUsed;
+                    gameState.level2AttemptsUsed = userStats.lastResult.level2AttemptsUsed;
+                    gameState.elapsedTime = userStats.lastResult.elapsedTime;
+
+                    let tenths = Math.floor((gameState.elapsedTime % 1000) / 100);
+                    let seconds = Math.floor(gameState.elapsedTime / 1000);
+                    stopwatchDisplay.innerText = `${seconds}.${tenths}s`;
+                }
+
                 lockKeypad();
                 stopStopwatch();
                 endGame("Come Back Tomorrow!", "You've already ruled on today's cases! Rest up for the next session.", "var(--text-dim)");
@@ -692,6 +705,15 @@
                 userStats.currentStreak = 0; 
             }
             userStats.lastPlayedDate = todayStr;
+
+            userStats.lastResult = {
+                gameDay: gameState.gameDay,
+                clearedLevel1: gameState.clearedLevel1,
+                clearedLevel2: gameState.clearedLevel2,
+                level1AttemptsUsed: gameState.level1AttemptsUsed,
+                level2AttemptsUsed: gameState.level2AttemptsUsed,
+                elapsedTime: gameState.elapsedTime
+            };
 
             localStorage.setItem('order_order_stats', JSON.stringify(userStats));
         }
